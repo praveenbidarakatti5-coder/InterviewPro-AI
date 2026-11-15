@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
 from app.config import settings
-from app.core.database import engine, Base, SessionLocal
+from app.core.database import engine, Base, SessionLocal, verify_db_connection
 from app.core.security import hash_password
 from app.models.entities import User
 
@@ -69,6 +69,10 @@ def root():
 @app.get("/api/health")
 def health_check():
     return {"status": "healthy", "database": "connected"}
+
+@app.get("/api/database/status")
+def database_status():
+    return verify_db_connection()
 
 # Register Modular Routers under /api
 app.include_router(auth.router, prefix="/api")

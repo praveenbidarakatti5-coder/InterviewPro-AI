@@ -41,6 +41,7 @@ const MockInterviewPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [timerSeconds, setTimerSeconds] = useState(0);
   const [finalReport, setFinalReport] = useState(null);
+  const [activeInterviewId, setActiveInterviewId] = useState(null);
 
   // Timer effect when interview is active
   useEffect(() => {
@@ -79,12 +80,15 @@ const MockInterviewPage = () => {
 
     // Notify backend session creation
     try {
-      await api.post('/mock-interview/start', {
+      const startRes = await api.post('/mock-interview/start', {
         role,
         category,
         difficulty,
         duration: durationMins,
       });
+      if (startRes.data?.interview_id) {
+        setActiveInterviewId(startRes.data.interview_id);
+      }
     } catch (e) {
       // client graceful fallback
     }
@@ -106,6 +110,7 @@ const MockInterviewPage = () => {
     try {
       // Send response to backend for AI conversational continuation
       const res = await api.post('/mock-interview/respond', {
+        interview_id: activeInterviewId,
         role,
         question_index: nextIndex,
         total_questions: maxQuestions,

@@ -78,6 +78,7 @@ class MockStartRequest(BaseModel):
     duration: int = 15
 
 class MockRespondRequest(BaseModel):
+    interview_id: Optional[str] = None
     role: str
     question_index: int
     total_questions: int
